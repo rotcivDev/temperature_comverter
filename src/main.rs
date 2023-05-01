@@ -16,12 +16,8 @@ fn main() {
     }
 }
 
-fn choice_handler(choice: &String) {
-    let choice: u32 = match choice.trim().parse() {
-        Ok(num) => num,
-        Err(_) => 0,
-    };
-
+fn choice_handler(choice: &str) {
+    let choice: u32 = choice.trim().parse().unwrap_or(0);
     match choice {
         1 => temperature_converter("celsius_to_fahrenheit"),
         2 => temperature_converter("fahrenheit_to_celsius"),
@@ -33,7 +29,7 @@ fn choice_handler(choice: &String) {
 fn temperature_converter(key: &str) {
     loop {
         let mut temperature = String::new();
-        println!("Enter the temperature in Celsius");
+        println!("Enter the temperature:");
         io::stdin()
             .read_line(&mut temperature)
             .expect("Failed to read line.");

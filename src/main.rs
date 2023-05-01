@@ -1,43 +1,36 @@
 use std::io;
+use std::process;
 
 fn main() {
     println!("Temperature Converter - between Celsius and Fahrenheit.");
-    
+
     loop {
-        println!("Press \n 1- To convert from C to F\n 2- To convert from F to C\n 9- To exit");
+        println!("Press \n 1- To convert from Celsius to Fahrenheit\n 2- To convert from Fahrenheit to Celsius\n 9- To exit");
 
-        const EXIT_CHOICE: u32 = 9;
-
-        let mut unit = String::new();
+        let mut choice = String::new();
         io::stdin()
-            .read_line(&mut unit)
+            .read_line(&mut choice)
             .expect("Failed to read line.");
 
-        let choice = choice_handler(&unit);
-
-        match choice {
-            1 => celsius_to_fahrenheit(),
-            2 => fahrenheit_to_celsius(),
-            EXIT_CHOICE => break,
-            _ => println!("invalid input"),
-        }
-
+        choice_handler(&choice);
     }
 }
 
-fn choice_handler(value: &String) -> u32 {
-    let value: u32 = match value.trim().parse() {
+fn choice_handler(choice: &String) {
+    let choice: u32 = match choice.trim().parse() {
         Ok(num) => num,
         Err(_) => 0,
     };
 
-    match value {
-        1 | 2 | 9 => value,
-        _ => 0,
+    match choice {
+        1 => temperature_converter("celsius_to_fahrenheit"),
+        2 => temperature_converter("fahrenheit_to_celsius"),
+        9 => process::exit(1),
+        _ => println!("Invalid choice"),
     }
 }
 
-fn celsius_to_fahrenheit() {
+fn temperature_converter(key: &str) {
     loop {
         let mut temperature = String::new();
         println!("Enter the temperature in Celsius");
@@ -45,31 +38,24 @@ fn celsius_to_fahrenheit() {
             .read_line(&mut temperature)
             .expect("Failed to read line.");
 
-        let in_celsius: f32 = match temperature.trim().parse() {
+        let temperature: f32 = match temperature.trim().parse() {
             Ok(num) => num,
             Err(_) => continue,
         };
-        let in_fahrenheit: f32 = (in_celsius * 1.8) + 32.0;
-        println!("{} celsius = {} fahrenheit", in_celsius, in_fahrenheit);
-        break;
-    }
-}
 
-fn fahrenheit_to_celsius() {
-    loop {
-        let mut temperature = String::new();
-        println!("Enter the temperature in Fahrenheit");
-        io::stdin()
-            .read_line(&mut temperature)
-            .expect("Failed to read line.");
-
-        let in_fahrenheit: f32 = match temperature.trim().parse() {
-            Ok(num) => num,
-            Err(_) => continue,
-        };
-        let in_celsius: f32 = ((in_fahrenheit - 32.0) / 1.8).try_into().unwrap();
-
-        println!("{} fahrenheit = {} celsius", in_fahrenheit, in_celsius);
+        match key {
+            "celsius_to_fahrenheit" => println!(
+                "{} celsius = {} fahrenheit",
+                temperature,
+                (temperature * 1.8) + 32.0
+            ),
+            "fahrenheit_to_celsius" => println!(
+                "{} fahrenheit = {} celsius",
+                temperature,
+                ((temperature - 32.0) / 1.8)
+            ),
+            _ => println!("Invalid conversion"),
+        }
         break;
     }
 }
